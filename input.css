@@ -10,7 +10,7 @@
     }
     
     body {
-        @apply text-whiteColor bg-primaryColor tracking-wider font-dmsans dark:bg-darkColor;
+        @apply text-blue-800 bg-primaryColor tracking-wider font-dmsans dark:bg-darkColor ;
     }
 
     section {

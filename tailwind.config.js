@@ -10,9 +10,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        primaryColor: '#010a5e',
-        primaryColorLight: "#010d78",
-        secondaryColor: '#FFCC00',
+        primaryColor: '#FFFFFF',
+        primaryColorLight: "#FFFFFF",
+        secondaryColor: '#5DBDED',
         paragraphColor: '#c0c0c0',      
         whiteColor: '#fff',
         blackColor: "#000",
