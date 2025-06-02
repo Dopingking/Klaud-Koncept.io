@@ -763,32 +763,56 @@
   debugElement.style.padding = '10px';
   document.body.appendChild(debugElement);
 
-  // Use a simpler namespace (special characters in URLs can cause issues)
-  const namespace = "klaudkoncept";
-  const todayKey = `visitors-today-${new Date().toISOString().split('T')[0]}`;
-  const totalKey = 'visitors-total';
+  // Proper implementation for https://klaud-koncept--sooty.vercel.app/
+  const namespace = "klaud-koncept--sooty-vercel-app"; // Cleaned URL format for API
+  const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-  function updateCounter(type, elementId) {
-    fetch(`https://api.countapi.xyz/hit/${namespace}/${type === 'today' ? todayKey : totalKey}`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        document.getElementById(elementId).textContent = data.value.toLocaleString();
-        if (type === 'today') {
-          document.getElementById('todayDate').textContent = new Date().toLocaleDateString();
+  // Format numbers with commas
+  const formatNumber = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // Unified counter function
+  const updateCounter = async (key, elementId, isDaily) => {
+    try {
+      // Try CountAPI first
+      const apiResponse = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+      const apiData = await apiResponse.json();
+      
+      document.getElementById(elementId).textContent = formatNumber(apiData.value);
+      
+      // Store a backup in localStorage
+      localStorage.setItem(`visitors-${key}`, apiData.value);
+    } catch (apiError) {
+      console.warn(`API failed (${key}), using localStorage fallback`);
+      
+      // Fallback to localStorage
+      let localCount = parseInt(localStorage.getItem(`visitors-${key}`)) || 0;
+      
+      // Reset daily counter if date changed
+      if (isDaily) {
+        const lastDate = localStorage.getItem('lastVisitDate');
+        if (lastDate !== todayDate) {
+          localCount = 0;
+          localStorage.setItem('lastVisitDate', todayDate);
         }
-      })
-      .catch(error => {
-        debugElement.innerHTML += `Counter error (${type}): ${error.message}<br>`;
-        document.getElementById(elementId).textContent = "N/A";
-      });
-  }
+      }
+      
+      localCount++;
+      localStorage.setItem(`visitors-${key}`, localCount);
+      document.getElementById(elementId).textContent = formatNumber(localCount);
+    }
+  };
 
-  // Initialize both counters
-  updateCounter('today', 'todayCount');
-  updateCounter('total', 'totalCount');
+  // Initialize counters
+  updateCounter(`today-${todayDate}`, 'todayCount', true); // Daily counter (resets)
+  updateCounter('total', 'totalCount', false); // Persistent counter
+  
+  // Display current date
+  document.getElementById('todayDate').textContent = 
+    new Date().toLocaleDateString('en-US', { 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    });
 </script>
   
   </body>
