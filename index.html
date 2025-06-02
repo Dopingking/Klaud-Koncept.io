@@ -687,29 +687,25 @@
           </ul>
 
           <div class="flex flex-col items-center border-t border-primaryColorLight dark:border-darkColorLight py-5 md:flex-row md:justify-between">
-            <!-- Visitor Counter Section -->
-              <section class="flex justify-center py-6 bg-gray-100 dark:bg-darkColor">
-                <div class="text-center">
-                  <h2 class="text-2xl font-bold uppercase mb-4 font-oswald">VISITORS COUNTER</h2>
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-md mx-auto">
-                    <!-- Today's Visitors -->
-                    <div class="bg-white dark:bg-darkColorLight p-4 rounded-lg shadow">
-                      <h3 class="text-lg font-semibold mb-2">Today</h3>
-                      <p id="todayCount" class="text-3xl font-bold text-secondaryColor">0</p>
-                      <p id="todayDate" class="text-sm text-gray-500 dark:text-gray-400"></p>
-                    </div>
-                    
-                    <!-- Total Visitors -->
-                    <div class="bg-white dark:bg-darkColorLight p-4 rounded-lg shadow">
-                      <h3 class="text-lg font-semibold mb-2">Total</h3>
-                      <p id="totalCount" class="text-3xl font-bold text-secondaryColor">0</p>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Since 18 Nov 2021</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
             <p class="paragraph">Copyright © 2025. All rights reserved.</p>
+            <!-- Visitor Counter -->
+                                <div class="text-center py-6 bg-gray-100 dark:bg-darkColor">
+                      <h2 class="text-2xl font-bold uppercase mb-4 font-oswald">VISITORS COUNTER</h2>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-md mx-auto">
+                        <!-- Today's Visitors -->
+                        <div class="bg-white dark:bg-darkColorLight p-4 rounded-lg shadow">
+                          <h3 class="text-lg font-semibold mb-2">Today</h3>
+                          <p id="todayCount" class="text-3xl font-bold text-secondaryColor">0</p>
+                          <p id="todayDate" class="text-sm text-gray-500 dark:text-gray-400"></p>
+                        </div>
+                        <!-- Total Visitors -->
+                        <div class="bg-white dark:bg-darkColorLight p-4 rounded-lg shadow">
+                          <h3 class="text-lg font-semibold mb-2">Total</h3>
+                          <p id="totalCount" class="text-3xl font-bold text-secondaryColor">0</p>
+                          <p class="text-sm text-gray-500 dark:text-gray-400">Since 18 Nov 2021</p>
+                        </div>
+                      </div>
+                    </div>
           </div>
         </div>
       </section>
@@ -758,43 +754,42 @@
     <script src="https://unpkg.com/scrollreveal"></script>
     <!--~~~~~~~~~~~~~~~ Main.js ~~~~~~~~~~~~~~~-->
     <script src="main.js"></script>
+    
+
     <script>
-  // Use your full Vercel URL as the namespace
-  const namespace = "klaud-koncept--sooty.vercel.app";
+  // Debug version - will show errors on page
+  const debugElement = document.createElement('div');
+  debugElement.style.color = 'red';
+  debugElement.style.padding = '10px';
+  document.body.appendChild(debugElement);
+
+  // Use a simpler namespace (special characters in URLs can cause issues)
+  const namespace = "klaudkoncept";
   const todayKey = `visitors-today-${new Date().toISOString().split('T')[0]}`;
   const totalKey = 'visitors-total';
 
-  // Format numbers with commas
-  function formatNumber(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  function updateCounter(type, elementId) {
+    fetch(`https://api.countapi.xyz/hit/${namespace}/${type === 'today' ? todayKey : totalKey}`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById(elementId).textContent = data.value.toLocaleString();
+        if (type === 'today') {
+          document.getElementById('todayDate').textContent = new Date().toLocaleDateString();
+        }
+      })
+      .catch(error => {
+        debugElement.innerHTML += `Counter error (${type}): ${error.message}<br>`;
+        document.getElementById(elementId).textContent = "N/A";
+      });
   }
 
-  // Fetch today's count
-  fetch(`https://api.countapi.xyz/hit/${namespace}/${todayKey}`)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('todayCount').textContent = formatNumber(data.value);
-      document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      });
-    })
-    .catch(err => {
-      console.error("Today's count error:", err);
-      document.getElementById('todayCount').textContent = "N/A";
-    });
-
-  // Fetch total count
-  fetch(`https://api.countapi.xyz/hit/${namespace}/${totalKey}`)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('totalCount').textContent = formatNumber(data.value);
-    })
-    .catch(err => {
-      console.error("Total count error:", err);
-      document.getElementById('totalCount').textContent = "N/A";
-    });
+  // Initialize both counters
+  updateCounter('today', 'todayCount');
+  updateCounter('total', 'totalCount');
 </script>
+  
   </body>
 </html>
