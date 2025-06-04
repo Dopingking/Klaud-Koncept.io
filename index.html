@@ -688,7 +688,7 @@
 
                 <div class="space-x-3">
                   <i class="fa-brands fa-facebook-f text-lg cursor-pointer text-secondaryColor hover:-translate-y-1 ease-in duration-200"></i>
-                  <i class="fa-brands fa-twitter text-lg cursor-pointer text-secondaryColor hover:-translate-y-1 ease-in duration-200"></i>
+                  <i class="fa-brands fa-tiktok text-lg cursor-pointer text-secondaryColor hover:-translate-y-1 ease-in duration-200"></i>
                   <i class="fa-brands fa-square-instagram text-lg cursor-pointer text-secondaryColor hover:-translate-y-1 ease-in duration-200"></i>
                 </div>
               </div>
@@ -747,65 +747,5 @@
     <!--~~~~~~~~~~~~~~~ Main.js ~~~~~~~~~~~~~~~-->
     <script src="main.js"></script>
     
-
-    <!-- <script>
-  // Debug version - will show errors on page
-  const debugElement = document.createElement('div');
-  debugElement.style.color = 'red';
-  debugElement.style.padding = '10px';
-  document.body.appendChild(debugElement);
-
-  // Proper implementation for https://klaud-koncept--sooty.vercel.app/
-  const namespace = "klaud-koncept--sooty-vercel-app"; // Cleaned URL format for API
-  const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
-  // Format numbers with commas
-  const formatNumber = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-  // Unified counter function
-  const updateCounter = async (key, elementId, isDaily) => {
-    try {
-      // Try CountAPI first
-      const apiResponse = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-      const apiData = await apiResponse.json();
-      
-      document.getElementById(elementId).textContent = formatNumber(apiData.value);
-      
-      // Store a backup in localStorage
-      localStorage.setItem(`visitors-${key}`, apiData.value);
-    } catch (apiError) {
-      console.warn(`API failed (${key}), using localStorage fallback`);
-      
-      // Fallback to localStorage
-      let localCount = parseInt(localStorage.getItem(`visitors-${key}`)) || 0;
-      
-      // Reset daily counter if date changed
-      if (isDaily) {
-        const lastDate = localStorage.getItem('lastVisitDate');
-        if (lastDate !== todayDate) {
-          localCount = 0;
-          localStorage.setItem('lastVisitDate', todayDate);
-        }
-      }
-      
-      localCount++;
-      localStorage.setItem(`visitors-${key}`, localCount);
-      document.getElementById(elementId).textContent = formatNumber(localCount);
-    }
-  };
-
-  // Initialize counters
-  updateCounter(`today-${todayDate}`, 'todayCount', true); // Daily counter (resets)
-  updateCounter('total', 'totalCount', false); // Persistent counter
-  
-  // Display current date
-  document.getElementById('todayDate').textContent = 
-    new Date().toLocaleDateString('en-US', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-</script>
-   -->
   </body>
 </html>
